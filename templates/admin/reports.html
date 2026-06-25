@@ -1,0 +1,16 @@
+{% extends "admin/admin_base.html" %}
+{% block admin_content %}
+<header class="page-head"><div><p class="eyebrow">Relatórios</p><h1>Vendas, lucro e tamanhos</h1></div></header>
+<section class="cards">
+  <article class="metric"><span>Receita bruta</span><strong>{{ profit.revenue|money }}</strong><small>itens vendidos</small></article>
+  <article class="metric orange"><span>Lucro estimado</span><strong>{{ profit.gross_profit|money }}</strong><small>venda menos custo</small></article>
+</section>
+<section class="grid-2">
+  <div class="panel"><h2>Tamanhos mais vendidos</h2>{% if sizes %}<div class="list-soft">{% for s in sizes %}<div><b>Tam. {{ s.size }}</b><span>{{ s.qty }} pares vendidos</span></div>{% endfor %}</div>{% else %}<p class="empty">Sem vendas ainda.</p>{% endif %}</div>
+  <div class="panel"><h2>Atalho comercial</h2><p class="muted">Use o catálogo público para mandar modelos disponíveis no WhatsApp, sem ficar caçando foto na galeria.</p><a class="btn" target="_blank" href="{{ url_for('catalog') }}">Abrir catálogo</a></div>
+</section>
+<section class="panel">
+  <h2>Últimas vendas</h2>
+  <div class="table-wrap"><table><thead><tr><th>#</th><th>Data</th><th>Cliente</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>{% for s in sales %}<tr><td>{{ s.id }}</td><td>{{ s.created_at }}</td><td>{{ s.customer_name or '-' }}</td><td>{{ s.payment_method }}</td><td>{{ s.total|money }}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

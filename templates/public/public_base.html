@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<header class="public-hero">
+  <nav class="public-nav">
+    <a href="{{ url_for('catalog') }}"><img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM"></a>
+    <a class="btn ghost" href="{{ url_for('login') }}">Painel</a>
+  </nav>
+  <div class="hero-content">
+    <p class="eyebrow">Catálogo online</p>
+    <h1>{{ settings.store_name }}</h1>
+    <p>{{ settings.store_subtitle }}</p>
+  </div>
+</header>
+<main class="public-main">
+  {% block public_content %}{% endblock %}
+</main>
+<footer class="footer">{{ settings.store_name }} • conforto em estoque, atendimento pelo WhatsApp.</footer>
+{% endblock %}

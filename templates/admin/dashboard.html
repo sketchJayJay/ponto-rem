@@ -1,0 +1,51 @@
+{% extends "admin/admin_base.html" %}
+{% block admin_content %}
+<header class="page-head">
+  <div>
+    <p class="eyebrow">Resumo do dia</p>
+    <h1>Ponto REM no controle</h1>
+  </div>
+  <a class="btn primary" href="{{ url_for('sale_new') }}">Registrar venda</a>
+</header>
+
+<section class="cards">
+  <article class="metric"><span>Produtos</span><strong>{{ total_products }}</strong><small>modelos cadastrados</small></article>
+  <article class="metric"><span>Estoque</span><strong>{{ total_stock }}</strong><small>pares disponíveis</small></article>
+  <article class="metric"><span>Valor parado</span><strong>{{ stock_value|money }}</strong><small>pelo custo</small></article>
+  <article class="metric orange"><span>Vendas do mês</span><strong>{{ month_sales|money }}</strong><small>{{ month_sold_qty }} pares vendidos</small></article>
+</section>
+
+<section class="grid-2">
+  <div class="panel">
+    <h2>Estoque baixo</h2>
+    {% if low_stock %}
+      <div class="table-wrap"><table>
+        <thead><tr><th>Modelo</th><th>Cor</th><th>Tam.</th><th>Qtd.</th></tr></thead>
+        <tbody>{% for item in low_stock %}<tr><td>{{ item.name }}</td><td>{{ item.color }}</td><td>{{ item.size }}</td><td><b>{{ item.quantity }}</b></td></tr>{% endfor %}</tbody>
+      </table></div>
+    {% else %}<p class="empty">Nenhum alerta no momento.</p>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>Mais vendidos</h2>
+    {% if best_sellers %}
+      <div class="list-soft">
+      {% for item in best_sellers %}
+        <div><b>{{ item.name }}</b><span>{{ item.color }} • Tam. {{ item.size }} • {{ item.qty }} vendidos</span></div>
+      {% endfor %}
+      </div>
+    {% else %}<p class="empty">As vendas aparecerão aqui.</p>{% endif %}
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Últimas movimentações</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Data</th><th>Tipo</th><th>Modelo</th><th>Variação</th><th>Qtd.</th><th>Obs.</th></tr></thead>
+    <tbody>
+      {% for m in recent_movements %}
+      <tr><td>{{ m.created_at }}</td><td><span class="pill {{ m.type }}">{{ m.type }}</span></td><td>{{ m.name }}</td><td>{{ m.color or '-' }} • {{ m.size or '-' }}</td><td>{{ m.quantity }}</td><td>{{ m.note }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

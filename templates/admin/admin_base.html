@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a href="{{ url_for('admin_dashboard') }}" class="brand">
+      <img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM">
+      <span>Gestão</span>
+    </a>
+    <nav>
+      <a href="{{ url_for('admin_dashboard') }}">Resumo</a>
+      <a href="{{ url_for('products') }}">Produtos</a>
+      <a href="{{ url_for('stock') }}">Entradas / Saídas</a>
+      <a href="{{ url_for('sale_new') }}">Nova venda</a>
+      <a href="{{ url_for('reports') }}">Relatórios</a>
+      <a href="{{ url_for('admin_settings') }}">Configurações</a>
+      <a href="{{ url_for('catalog') }}" target="_blank">Ver catálogo</a>
+    </nav>
+    <a class="logout" href="{{ url_for('logout') }}">Sair</a>
+  </aside>
+  <main class="main-panel">
+    {% block admin_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

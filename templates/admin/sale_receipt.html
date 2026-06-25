@@ -1,0 +1,17 @@
+{% extends "admin/admin_base.html" %}
+{% block admin_content %}
+<header class="page-head no-print"><div><p class="eyebrow">Venda registrada</p><h1>Recibo #{{ sale.id }}</h1></div><button class="btn" onclick="window.print()">Imprimir</button></header>
+<section class="receipt panel">
+  <img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM">
+  <h2>Recibo de venda</h2>
+  <p>{{ sale.created_at }}</p>
+  {% if sale.customer_name %}<p><b>Cliente:</b> {{ sale.customer_name }} {% if sale.customer_phone %}• {{ sale.customer_phone }}{% endif %}</p>{% endif %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Produto</th><th>Qtd.</th><th>Unit.</th><th>Total</th></tr></thead>
+    <tbody>{% for i in items %}<tr><td>{{ i.name }} • {{ i.color }} • Tam. {{ i.size }}</td><td>{{ i.quantity }}</td><td>{{ i.unit_price|money }}</td><td>{{ (i.quantity * i.unit_price)|money }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p><b>Pagamento:</b> {{ sale.payment_method }}</p>
+  <p><b>Desconto:</b> {{ sale.discount|money }}</p>
+  <h2>Total: {{ sale.total|money }}</h2>
+</section>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "admin/admin_base.html" %}
+{% block admin_content %}
+<header class="page-head">
+  <div>
+    <p class="eyebrow">Cadastro</p>
+    <h1>Produtos e numerações</h1>
+  </div>
+  <a class="btn primary" href="{{ url_for('product_new') }}">Novo produto</a>
+</header>
+<form class="search-bar" method="get">
+  <input name="q" value="{{ q }}" placeholder="Buscar por modelo, marca ou categoria">
+  <button class="btn" type="submit">Buscar</button>
+</form>
+<section class="product-grid admin-products">
+{% for product in products %}
+  <article class="product-card">
+    <img src="{{ product_image(product) }}" alt="{{ product.name }}">
+    <div class="product-info">
+      <span class="pill">{{ product.category }}</span>
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.brand or 'Sem marca' }}</p>
+      <strong>{{ product.price|money }}</strong>
+      <small>{{ product.total_quantity }} pares • {{ product.variant_count }} variações</small>
+    </div>
+    <div class="card-actions">
+      <a class="btn" href="{{ url_for('product_edit', product_id=product.id) }}">Editar</a>
+      <form method="post" action="{{ url_for('product_delete', product_id=product.id) }}" onsubmit="return confirm('Remover este produto?')">
+        <button class="btn danger" type="submit">Excluir</button>
+      </form>
+    </div>
+  </article>
+{% else %}
+  <div class="empty wide">Nenhum produto cadastrado ainda. Hora de calçar o sistema. 👟</div>
+{% endfor %}
+</section>
+{% endblock %}

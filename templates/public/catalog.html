@@ -1,0 +1,31 @@
+{% extends "public/public_base.html" %}
+{% block public_content %}
+<section class="catalog-intro">
+  <h2>Modelos disponíveis</h2>
+  <p>{{ settings.catalog_intro }}</p>
+</section>
+<form class="catalog-filter" method="get">
+  <input name="q" value="{{ q }}" placeholder="Buscar modelo, marca ou tipo">
+  <select name="tam"><option value="">Todos os tamanhos</option>{% for s in sizes %}<option value="{{ s.size }}" {% if size==s.size %}selected{% endif %}>Tam. {{ s.size }}</option>{% endfor %}</select>
+  <select name="cor"><option value="">Todas as cores</option>{% for c in colors %}<option value="{{ c.color }}" {% if color==c.color %}selected{% endif %}>{{ c.color }}</option>{% endfor %}</select>
+  <button class="btn primary" type="submit">Filtrar</button>
+</form>
+<section class="product-grid public-products">
+{% for product in products %}
+  <article class="product-card public-card">
+    {% if product.highlight %}<span class="badge">Destaque</span>{% endif %}
+    <img src="{{ product_image(product) }}" alt="{{ product.name }}">
+    <div class="product-info">
+      <span class="pill">{{ product.category }}</span>
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.brand }}</p>
+      <strong>{{ product.price|money }}</strong>
+      <small>{{ product.total_quantity }} pares disponíveis</small>
+      <a class="btn primary" href="{{ url_for('product_detail', product_id=product.id) }}">Ver tamanhos</a>
+    </div>
+  </article>
+{% else %}
+  <div class="empty wide">Nenhum modelo encontrado com esses filtros.</div>
+{% endfor %}
+</section>
+{% endblock %}

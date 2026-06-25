@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1"><stop stop-color="#eef5ff"/><stop offset="1" stop-color="#fff3ea"/></linearGradient>
+  </defs>
+  <rect width="900" height="620" rx="42" fill="url(#g)"/>
+  <path d="M188 373c46-11 89-35 128-73 23-22 42-44 62-44 44 0 82 69 154 98 50 20 106 12 151 34 24 12 42 32 42 57 0 34-29 55-68 55H226c-63 0-104-24-104-62 0-31 24-54 66-65z" fill="#244ba4" opacity=".14"/>
+  <path d="M188 355c55-13 105-52 146-91 18-17 33-26 50-22 37 8 72 62 132 87 48 20 113 12 162 38 27 15 46 39 45 68-1 34-30 54-69 54H232c-68 0-111-25-111-62 0-34 26-60 67-72z" fill="#fff" stroke="#244ba4" stroke-width="15"/>
+  <path d="M311 285l59 62m29-73l41 88m20-54l87 54" stroke="#ff5a1f" stroke-width="13" stroke-linecap="round"/>
+  <path d="M158 427h559" stroke="#07112b" stroke-width="16" stroke-linecap="round" opacity=".85"/>
+  <text x="450" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#244ba4" font-weight="700">Ponto REM</text>
+</svg>

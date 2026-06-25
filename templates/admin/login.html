@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="login-page">
+  <section class="login-card">
+    <img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM">
+    <h1>Painel Ponto REM</h1>
+    <p>Controle de estoque, vendas e catálogo público.</p>
+    <form method="post" class="form-grid">
+      <label>Usuário
+        <input type="text" name="user" value="admin" autocomplete="username" required>
+      </label>
+      <label>Senha
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn primary" type="submit">Entrar</button>
+    </form>
+    <small>Padrão: admin / admin123. Troque pelo Coolify nas variáveis.</small>
+  </section>
+</main>
+{% endblock %}

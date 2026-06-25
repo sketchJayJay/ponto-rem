@@ -1,0 +1,25 @@
+{% extends "public/public_base.html" %}
+{% block public_content %}
+<section class="detail-card">
+  <div class="detail-image"><img src="{{ product_image(product) }}" alt="{{ product.name }}"></div>
+  <div class="detail-info">
+    <span class="pill">{{ product.category }}</span>
+    <h2>{{ product.name }}</h2>
+    <p class="muted">{{ product.brand }}</p>
+    <strong class="detail-price">{{ product.price|money }}</strong>
+    <p>{{ product.description }}</p>
+    <h3>Tamanhos disponíveis</h3>
+    <div class="size-cloud">
+      {% for v in variants %}<span>{{ v.color }} • Tam. {{ v.size }} <b>{{ v.quantity }}</b></span>{% endfor %}
+    </div>
+    {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
+    {% set msg = 'Olá, tenho interesse no ' ~ product.name ~ '. Vi no catálogo da Ponto REM. Está disponível?' %}
+    {% if phone %}
+      <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ msg|urlencode }}">Chamar no WhatsApp</a>
+    {% else %}
+      <p class="empty">Cadastre o WhatsApp da loja nas configurações para ativar o botão.</p>
+    {% endif %}
+    <a class="btn" href="{{ url_for('catalog') }}">Voltar ao catálogo</a>
+  </div>
+</section>
+{% endblock %}
