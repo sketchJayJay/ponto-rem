@@ -1,48 +1,61 @@
 {% extends "base.html" %}
 {% block body %}
-<header class="public-hero premium-hero">
-  <nav class="public-nav">
+<header class="public-hero ultra-hero">
+  <nav class="public-nav ultra-nav">
     <a class="public-logo" href="{{ url_for('catalog') }}">
       <img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM">
       <span>
         <strong>{{ settings.store_name }}</strong>
-        <small>Conforto com estilo</small>
+        <small>Vitrine de tênis ortopédicos</small>
       </span>
     </a>
+    <div class="public-menu">
+      <a href="{{ url_for('catalog') }}#vitrine">Vitrine</a>
+      <a href="{{ url_for('catalog') }}#categorias">Categorias</a>
+      <a href="{{ url_for('catalog') }}#como-comprar">Como comprar</a>
+    </div>
     <div class="public-nav-actions">
       {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
       {% if phone %}
-        <a class="btn whatsapp-outline" target="_blank" href="https://wa.me/55{{ phone }}">WhatsApp</a>
+        <a class="btn whatsapp-outline" target="_blank" href="https://wa.me/55{{ phone }}?text={{ ('Olá! Quero atendimento da ' ~ settings.store_name)|urlencode }}">WhatsApp</a>
       {% endif %}
       <a class="btn ghost" href="{{ url_for('login') }}">Painel</a>
     </div>
   </nav>
-  <div class="hero-content premium-content">
+  <div class="hero-content ultra-content">
     <div class="hero-copy">
-      <p class="eyebrow">Vitrine online .REM</p>
-      <h1>{{ settings.store_name }}</h1>
+      <p class="eyebrow">Catálogo premium .REM</p>
+      <h1>Escolha conforto sem ficar perguntando tamanho por tamanho.</h1>
       <p>{{ settings.store_subtitle }}</p>
       <div class="hero-cta-row">
-        <a class="btn primary" href="{{ url_for('catalog') }}#vitrine">Ver vitrine</a>
+        <a class="btn primary big-btn" href="{{ url_for('catalog') }}#vitrine">Abrir vitrine</a>
         {% if phone %}
-          <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ ('Olá! Quero atendimento sobre os tênis ortopédicos da ' ~ settings.store_name)|urlencode }}">Atendimento no WhatsApp</a>
+          <a class="btn whatsapp big-btn" target="_blank" href="https://wa.me/55{{ phone }}?text={{ ('Olá! Quero ver os modelos disponíveis da ' ~ settings.store_name)|urlencode }}">Falar com a loja</a>
         {% endif %}
       </div>
     </div>
-    <div class="hero-feature-card">
-      <div class="hero-feature-top">
-        <span class="pill orange">Especialidade</span>
-        <strong>Tênis ortopédicos</strong>
+    <div class="hero-showcase">
+      <div class="showcase-orbit"></div>
+      <div class="showcase-card main">
+        <span>Vitrine atualizada</span>
+        <strong>Modelos, cores e tamanhos no mesmo link</strong>
       </div>
-      <ul class="hero-feature-list">
-        <li>Modelos com foco em conforto e estabilidade</li>
-        <li>Tamanhos e cores atualizados conforme o estoque</li>
-        <li>Escolha os modelos e envie seu interesse por WhatsApp</li>
-      </ul>
+      <div class="showcase-card floating one">
+        <b>34 ao 42</b>
+        <small>Filtre por numeração</small>
+      </div>
+      <div class="showcase-card floating two">
+        <b>WhatsApp</b>
+        <small>Sacola de interesse</small>
+      </div>
+      <div class="showcase-card floating three">
+        <b>Últimas unidades</b>
+        <small>Aviso automático</small>
+      </div>
     </div>
   </div>
 </header>
-<main class="public-main premium-main">
+<main class="public-main ultra-main">
   {% block public_content %}{% endblock %}
 </main>
 <div class="interest-fab" data-interest-open>
@@ -55,7 +68,7 @@
 <aside class="interest-drawer" data-interest-drawer>
   <div class="interest-drawer-head">
     <div>
-      <p class="eyebrow">WhatsApp inteligente</p>
+      <p class="eyebrow">Atendimento rápido</p>
       <h3>Sacola de interesse</h3>
     </div>
     <button class="icon-btn" type="button" data-interest-close>×</button>
@@ -74,5 +87,8 @@
   </div>
 </aside>
 <div class="interest-overlay" data-interest-overlay></div>
-<footer class="footer">{{ settings.store_name }} • conforto em estoque, atendimento pelo WhatsApp.</footer>
+<footer class="footer ultra-footer">
+  <strong>{{ settings.store_name }}</strong>
+  <span>Catálogo online com estoque por tamanho, cor e atendimento pelo WhatsApp.</span>
+</footer>
 {% endblock %}

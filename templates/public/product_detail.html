@@ -1,13 +1,13 @@
 {% extends "public/public_base.html" %}
 {% block public_content %}
-<section class="detail-card premium-detail-card">
-  <div class="detail-image-wrap">
+<section class="detail-card premium-detail-card ultra-detail-card">
+  <div class="detail-image-wrap ultra-detail-media">
     <div class="detail-image"><img src="{{ product_image(product) }}" alt="{{ product.name }}"></div>
     <div class="detail-image-note">
       {% if total_quantity <= low_limit %}
-        <span class="stock-badge low">Últimas unidades disponíveis</span>
+        <span class="stock-badge low inline">Últimas unidades</span>
       {% else %}
-        <span class="stock-badge">Estoque disponível</span>
+        <span class="stock-badge inline">Disponível</span>
       {% endif %}
       <strong>{{ total_quantity }} unidades em estoque</strong>
     </div>
@@ -19,15 +19,16 @@
     <strong class="detail-price">{{ product.price|money }}</strong>
     <p class="detail-description">{{ product.description or 'Modelo ortopédico pensado para oferecer conforto, melhor ajuste e bem-estar no dia a dia.' }}</p>
 
-    <div class="detail-benefits">
-      <div class="benefit-box"><strong>Conforto</strong><span>Mais estabilidade para o dia a dia</span></div>
-      <div class="benefit-box"><strong>Disponível</strong><span>Escolha pelo tamanho e cor</span></div>
-      <div class="benefit-box"><strong>Atendimento</strong><span>Solicite pelo WhatsApp</span></div>
+    <div class="detail-benefits premium-benefits">
+      <div class="benefit-box"><strong>Conforto</strong><span>Feito para rotina e bem-estar</span></div>
+      <div class="benefit-box"><strong>Estoque real</strong><span>Tamanhos e cores disponíveis</span></div>
+      <div class="benefit-box"><strong>Compra rápida</strong><span>Reserve pelo WhatsApp</span></div>
     </div>
 
-    <div class="selection-card">
-      <h3>Escolha o que te interessa</h3>
-      <p>Selecione cor e tamanho para mandar uma mensagem mais completa.</p>
+    <div class="selection-card reserve-card">
+      <p class="eyebrow">Reserva rápida</p>
+      <h3>Escolha cor e tamanho</h3>
+      <p>A mensagem já sai pronta para o WhatsApp da loja.</p>
       <div class="selection-grid">
         <label>
           Cor
@@ -48,16 +49,30 @@
           </select>
         </label>
       </div>
-      <button
-        class="btn primary"
-        type="button"
-        data-interest-add
-        data-product-id="{{ product.id }}"
-        data-product-name="{{ product.name }}"
-        data-product-price="{{ product.price|money }}"
-        data-product-link="{{ url_for('product_detail', product_id=product.id) }}"
-        data-detail-product
-      >Adicionar à sacola de interesse</button>
+      <div class="reserve-actions">
+        <button
+          class="btn primary"
+          type="button"
+          data-interest-add
+          data-product-id="{{ product.id }}"
+          data-product-name="{{ product.name }}"
+          data-product-price="{{ product.price|money }}"
+          data-product-link="{{ url_for('product_detail', product_id=product.id) }}"
+          data-detail-product
+        >Adicionar à lista</button>
+        {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
+        {% if phone %}
+          <a
+            class="btn whatsapp"
+            target="_blank"
+            href="https://wa.me/55{{ phone }}?text={{ ('Olá, tenho interesse no ' ~ product.name ~ '. Vi no catálogo da ' ~ settings.store_name ~ '. Está disponível?')|urlencode }}"
+            data-reserve-whatsapp
+            data-whatsapp="55{{ phone }}"
+            data-product-name="{{ product.name }}"
+            data-store-name="{{ settings.store_name }}"
+          >Reservar pelo WhatsApp</a>
+        {% endif %}
+      </div>
     </div>
 
     <div class="variant-display">
@@ -76,13 +91,8 @@
       </div>
     </div>
 
-    {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
-    {% set msg = 'Olá, tenho interesse no ' ~ product.name ~ '. Vi no catálogo da ' ~ settings.store_name ~ '. Está disponível?' %}
     <div class="detail-actions-row">
-      {% if phone %}
-        <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ msg|urlencode }}">Chamar no WhatsApp</a>
-      {% endif %}
-      <a class="btn" href="{{ url_for('catalog') }}">Voltar à vitrine</a>
+      <a class="btn" href="{{ url_for('catalog') }}#vitrine">Voltar à vitrine</a>
     </div>
   </div>
 </section>
@@ -91,14 +101,14 @@
 <section class="related-section">
   <div class="section-head">
     <div>
-      <p class="eyebrow">Você também pode gostar</p>
+      <p class="eyebrow">Mais opções</p>
       <h2>Outros modelos disponíveis</h2>
     </div>
   </div>
-  <section class="product-grid public-products">
+  <section class="product-grid public-products ultra-products">
     {% for item in related %}
       {% set meta = related_map.get(item.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
-      <article class="product-card public-card premium-product-card compact-card">
+      <article class="product-card public-card premium-product-card ultra-product-card compact-card">
         <div class="card-media">
           {% if item.highlight %}<span class="badge">Destaque</span>{% endif %}
           <img src="{{ product_image(item) }}" alt="{{ item.name }}">

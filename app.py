@@ -626,11 +626,18 @@ def public_home():
     return redirect(url_for("catalog"))
 
 
+@app.route("/loja")
+@app.route("/vitrine")
+def public_store_alias():
+    return redirect(url_for("catalog"))
+
+
 @app.route("/catalogo")
 def catalog():
     search = request.args.get("q", "").strip()
     size = request.args.get("tam", "").strip()
     color = request.args.get("cor", "").strip()
+    category = request.args.get("categoria", "").strip()
     params = []
     where = ["p.show_public = 1"]
     if search:
@@ -642,6 +649,9 @@ def catalog():
     if color:
         where.append("EXISTS (SELECT 1 FROM variants vx WHERE vx.product_id = p.id AND vx.color LIKE ? AND vx.quantity > 0)")
         params.append(f"%{color}%")
+    if category:
+        where.append("p.category = ?")
+        params.append(category)
     products = query_all(
         f"""
         SELECT p.*, COALESCE(SUM(v.quantity),0) total_quantity
@@ -650,7 +660,7 @@ def catalog():
         WHERE {' AND '.join(where)}
         GROUP BY p.id
         HAVING total_quantity > 0
-        ORDER BY p.highlight DESC, p.name ASC
+        ORDER BY p.highlight DESC, p.updated_at DESC, p.name ASC
         """,
         tuple(params),
     )
@@ -676,7 +686,10 @@ def catalog():
             entry["stock"] += row["quantity"]
     sizes = query_all("SELECT DISTINCT size FROM variants WHERE quantity > 0 ORDER BY CAST(size AS INTEGER), size")
     colors = query_all("SELECT DISTINCT color FROM variants WHERE quantity > 0 ORDER BY color")
-    highlights = [row for row in products if row["highlight"]][:4]
+    categories = query_all("SELECT DISTINCT category FROM products WHERE show_public=1 AND category != '' ORDER BY category")
+    highlights = [row for row in products if row["highlight"]][:6]
+    spotlight = highlights[0] if highlights else (products[0] if products else None)
+    new_arrivals = products[:8]
     stats = {
         "total_models": len(products),
         "total_stock": sum(item["stock"] for item in variant_map.values()) if variant_map else 0,
@@ -688,11 +701,15 @@ def catalog():
         products=products,
         sizes=sizes,
         colors=colors,
+        categories=categories,
         q=search,
         size=size,
         color=color,
+        category=category,
         variant_map=variant_map,
         highlights=highlights,
+        spotlight=spotlight,
+        new_arrivals=new_arrivals,
         stats=stats,
         low_limit=low_limit,
     )

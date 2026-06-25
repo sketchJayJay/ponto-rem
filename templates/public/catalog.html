@@ -1,36 +1,69 @@
 {% extends "public/public_base.html" %}
 {% block public_content %}
-<section class="catalog-top-strip">
+<section class="catalog-top-strip ultra-stats">
   <div class="metric-mini">
     <strong>{{ stats.total_models }}</strong>
-    <span>modelos disponíveis</span>
+    <span>modelos na vitrine</span>
   </div>
   <div class="metric-mini">
     <strong>{{ stats.total_stock }}</strong>
-    <span>itens no estoque</span>
+    <span>pares disponíveis</span>
   </div>
   <div class="metric-mini">
     <strong>{{ stats.featured_count }}</strong>
-    <span>destaques na vitrine</span>
+    <span>destaques selecionados</span>
+  </div>
+</section>
+
+<section class="banner-carousel" data-banner-carousel>
+  <article class="banner-slide active">
+    <div>
+      <p class="eyebrow">Nova experiência</p>
+      <h2>Catálogo com cara de loja, não de planilha.</h2>
+      <p>O cliente vê foto, preço, cor, numeração e manda os modelos direto para o WhatsApp.</p>
+    </div>
+    <span>01</span>
+  </article>
+  <article class="banner-slide">
+    <div>
+      <p class="eyebrow">Filtro esperto</p>
+      <h2>Achou pelo tamanho? Agora vende mais rápido.</h2>
+      <p>Numeração, cores e categorias ficam organizadas para o cliente não se perder.</p>
+    </div>
+    <span>02</span>
+  </article>
+  <article class="banner-slide">
+    <div>
+      <p class="eyebrow">WhatsApp pronto</p>
+      <h2>Sacola de interesse com mensagem automática.</h2>
+      <p>O cliente escolhe vários modelos e manda tudo em uma mensagem só.</p>
+    </div>
+    <span>03</span>
+  </article>
+  <div class="banner-dots">
+    <button class="active" type="button" data-banner-dot="0"></button>
+    <button type="button" data-banner-dot="1"></button>
+    <button type="button" data-banner-dot="2"></button>
   </div>
 </section>
 
 <section class="catalog-intro premium-intro" id="vitrine">
   <div>
-    <h2>Vitrine online</h2>
+    <p class="eyebrow">Vitrine da loja</p>
+    <h2>Modelos disponíveis agora</h2>
     <p>{{ settings.catalog_intro }}</p>
   </div>
   <div class="quick-filter-tags">
-    {% for s in sizes[:6] %}
-      <a class="quick-chip {% if size == s.size %}active{% endif %}" href="{{ url_for('catalog', q=q, tam=s.size, cor=color) }}">Tam. {{ s.size }}</a>
+    {% for s in sizes[:7] %}
+      <a class="quick-chip {% if size == s.size %}active{% endif %}" href="{{ url_for('catalog', q=q, tam=s.size, cor=color, categoria=category) }}">Tam. {{ s.size }}</a>
     {% endfor %}
   </div>
 </section>
 
-<form class="catalog-filter premium-filter" method="get">
+<form class="catalog-filter premium-filter ultra-filter" method="get">
   <div class="search-field">
     <span>🔎</span>
-    <input name="q" value="{{ q }}" placeholder="Busque por modelo, marca, cor ou tipo de tênis">
+    <input name="q" value="{{ q }}" placeholder="Buscar por modelo, marca, cor ou tipo">
   </div>
   <select name="tam">
     <option value="">Todos os tamanhos</option>
@@ -44,12 +77,67 @@
       <option value="{{ c.color }}" {% if color==c.color %}selected{% endif %}>{{ c.color }}</option>
     {% endfor %}
   </select>
+  <select name="categoria">
+    <option value="">Todas as categorias</option>
+    {% for item in categories %}
+      <option value="{{ item.category }}" {% if category==item.category %}selected{% endif %}>{{ item.category }}</option>
+    {% endfor %}
+  </select>
   <button class="btn primary" type="submit">Aplicar</button>
   <a class="btn" href="{{ url_for('catalog') }}">Limpar</a>
 </form>
 
+<section class="category-runway" id="categorias">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Navegação rápida</p>
+      <h2>Comprar por categoria</h2>
+    </div>
+  </div>
+  <div class="category-grid">
+    <a class="category-tile {% if not category %}active{% endif %}" href="{{ url_for('catalog') }}#vitrine">
+      <span>Todos</span><strong>Vitrine completa</strong>
+    </a>
+    {% for item in categories %}
+      <a class="category-tile {% if category==item.category %}active{% endif %}" href="{{ url_for('catalog', categoria=item.category) }}#vitrine">
+        <span>{{ item.category }}</span><strong>Ver modelos</strong>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% if spotlight %}
+{% set spotmeta = variant_map.get(spotlight.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
+<section class="spotlight-product">
+  <div class="spotlight-copy">
+    <p class="eyebrow">Produto vitrine</p>
+    <h2>{{ spotlight.name }}</h2>
+    <p>{{ spotlight.description or 'Modelo ortopédico selecionado para quem busca conforto, estabilidade e estilo no dia a dia.' }}</p>
+    <div class="spotlight-price">{{ spotlight.price|money }}</div>
+    <div class="chip-row wrap">
+      {% for s in spotmeta.sizes[:8] %}<span class="size-chip">Tam. {{ s }}</span>{% endfor %}
+    </div>
+    <div class="detail-actions-row">
+      <a class="btn primary" href="{{ url_for('product_detail', product_id=spotlight.id) }}">Ver detalhes</a>
+      <button
+        class="btn"
+        type="button"
+        data-interest-add
+        data-product-id="{{ spotlight.id }}"
+        data-product-name="{{ spotlight.name }}"
+        data-product-price="{{ spotlight.price|money }}"
+        data-product-link="{{ url_for('product_detail', product_id=spotlight.id) }}"
+      >Adicionar à lista</button>
+    </div>
+  </div>
+  <div class="spotlight-image">
+    <img src="{{ product_image(spotlight) }}" alt="{{ spotlight.name }}">
+  </div>
+</section>
+{% endif %}
+
 {% if highlights %}
-<section class="featured-row">
+<section class="featured-row ultra-featured">
   {% for product in highlights %}
     {% set meta = variant_map.get(product.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
     <article class="featured-card">
@@ -68,10 +156,10 @@
 </section>
 {% endif %}
 
-<section class="product-grid public-products">
+<section class="product-grid public-products ultra-products">
 {% for product in products %}
   {% set meta = variant_map.get(product.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
-  <article class="product-card public-card premium-product-card">
+  <article class="product-card public-card premium-product-card ultra-product-card">
     <div class="card-media">
       {% if product.highlight %}<span class="badge">Destaque</span>{% endif %}
       {% if meta.stock <= low_limit %}<span class="stock-badge low">Últimas unidades</span>{% else %}<span class="stock-badge">Disponível</span>{% endif %}
@@ -86,21 +174,21 @@
       <strong>{{ product.price|money }}</strong>
       <div class="variant-summary">
         <div>
-          <small>Tamanhos</small>
+          <small>Tamanhos disponíveis</small>
           <div class="chip-row">
-            {% for item in meta.sizes[:6] %}<span class="size-chip">{{ item }}</span>{% endfor %}
-            {% if meta.sizes|length > 6 %}<span class="size-chip more">+{{ meta.sizes|length - 6 }}</span>{% endif %}
+            {% for item in meta.sizes[:7] %}<span class="size-chip">{{ item }}</span>{% endfor %}
+            {% if meta.sizes|length > 7 %}<span class="size-chip more">+{{ meta.sizes|length - 7 }}</span>{% endif %}
           </div>
         </div>
         <div>
           <small>Cores</small>
           <div class="chip-row">
-            {% for item in meta.colors[:3] %}<span class="color-pill">{{ item }}</span>{% endfor %}
-            {% if meta.colors|length > 3 %}<span class="color-pill">+{{ meta.colors|length - 3 }}</span>{% endif %}
+            {% for item in meta.colors[:4] %}<span class="color-pill">{{ item }}</span>{% endfor %}
+            {% if meta.colors|length > 4 %}<span class="color-pill">+{{ meta.colors|length - 4 }}</span>{% endif %}
           </div>
         </div>
       </div>
-      <small>{{ meta.stock }} unidades disponíveis</small>
+      <small>{{ meta.stock }} unidades em estoque</small>
     </div>
     <div class="card-actions public-card-actions">
       <a class="btn primary" href="{{ url_for('product_detail', product_id=product.id) }}">Ver detalhes</a>
@@ -118,5 +206,19 @@
 {% else %}
   <div class="empty wide">Nenhum modelo encontrado com esses filtros.</div>
 {% endfor %}
+</section>
+
+<section class="how-to-buy" id="como-comprar">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Venda pelo WhatsApp</p>
+      <h2>Como o cliente compra</h2>
+    </div>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card"><span>1</span><strong>Escolhe o modelo</strong><p>O cliente filtra por tamanho, cor ou categoria.</p></div>
+    <div class="step-card"><span>2</span><strong>Monta a lista</strong><p>Ele adiciona um ou vários tênis na sacola de interesse.</p></div>
+    <div class="step-card"><span>3</span><strong>Chama no WhatsApp</strong><p>A mensagem vai pronta para a loja finalizar o atendimento.</p></div>
+  </div>
 </section>
 {% endblock %}

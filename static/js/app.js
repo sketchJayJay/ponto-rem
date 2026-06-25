@@ -175,3 +175,38 @@ document.addEventListener('click', (event) => {
 });
 
 renderInterestBag();
+
+function updateReserveWhatsApp(){
+  const button = document.querySelector('[data-reserve-whatsapp]');
+  if(!button) return;
+  const color = document.querySelector('[data-detail-color]')?.value || '';
+  const size = document.querySelector('[data-detail-size]')?.value || '';
+  const product = button.dataset.productName || 'modelo';
+  const store = button.dataset.storeName || 'Ponto REM';
+  const phone = button.dataset.whatsapp;
+  const extra = `${color ? ' Cor: ' + color + '.' : ''}${size ? ' Tamanho: ' + size + '.' : ''}`;
+  const message = encodeURIComponent(`Olá! Quero reservar o ${product}.${extra} Vi no catálogo da ${store}. Está disponível?`);
+  button.href = `https://wa.me/${phone}?text=${message}`;
+}
+
+document.addEventListener('change', (event) => {
+  if(event.target.matches('[data-detail-color], [data-detail-size]')) updateReserveWhatsApp();
+});
+
+function startBannerCarousel(){
+  const carousel = document.querySelector('[data-banner-carousel]');
+  if(!carousel) return;
+  const slides = [...carousel.querySelectorAll('.banner-slide')];
+  const dots = [...carousel.querySelectorAll('[data-banner-dot]')];
+  let index = 0;
+  function showSlide(next){
+    index = next;
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+  }
+  dots.forEach(dot => dot.addEventListener('click', () => showSlide(Number(dot.dataset.bannerDot || 0))));
+  setInterval(() => showSlide((index + 1) % slides.length), 5200);
+}
+
+updateReserveWhatsApp();
+startBannerCarousel();

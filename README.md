@@ -44,3 +44,19 @@ DATA_DIR=/data
 ## Observação importante
 
 O banco SQLite fica em `/data/ponto_rem.db`. Para não perder dados em atualização, mantenha o volume `/data` persistente no Coolify.
+
+## Atualização: catálogo ultra premium
+
+Esta versão inclui uma vitrine pública mais comercial para a Ponto REM:
+
+- Hero com chamada de venda
+- Carrossel de banners
+- Filtro por tamanho, cor, categoria e busca
+- Categorias rápidas
+- Produto vitrine em destaque
+- Cards com selo de destaque e últimas unidades
+- Sacola de interesse com envio automático pelo WhatsApp
+- Página do produto com reserva rápida por cor e tamanho
+- Rotas públicas: `/catalogo`, `/loja` e `/vitrine`
+
+Para o botão do WhatsApp funcionar, entre no painel em **Configurações** e preencha o número da loja.
