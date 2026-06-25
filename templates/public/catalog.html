@@ -1,42 +1,44 @@
 {% extends "public/public_base.html" %}
 {% block public_content %}
+{% if stats.total_models > 0 %}
 <section class="catalog-top-strip ultra-stats">
   <div class="metric-mini">
     <strong>{{ stats.total_models }}</strong>
-    <span>modelos na vitrine</span>
+    <span>modelos disponíveis</span>
   </div>
   <div class="metric-mini">
     <strong>{{ stats.total_stock }}</strong>
-    <span>pares disponíveis</span>
+    <span>pares no catálogo</span>
   </div>
   <div class="metric-mini">
     <strong>{{ stats.featured_count }}</strong>
-    <span>destaques selecionados</span>
+    <span>modelos em destaque</span>
   </div>
 </section>
+{% endif %}
 
 <section class="banner-carousel" data-banner-carousel>
   <article class="banner-slide active">
     <div>
-      <p class="eyebrow">Nova experiência</p>
-      <h2>Catálogo com cara de loja, não de planilha.</h2>
-      <p>O cliente vê foto, preço, cor, numeração e manda os modelos direto para o WhatsApp.</p>
+      <p class="eyebrow">Bem-estar em cada passo</p>
+      <h2>Seu conforto começa pelos pés.</h2>
+      <p>Modelos pensados para trazer mais leveza, estabilidade e bem-estar para o seu dia a dia.</p>
     </div>
     <span>01</span>
   </article>
   <article class="banner-slide">
     <div>
-      <p class="eyebrow">Filtro esperto</p>
-      <h2>Achou pelo tamanho? Agora vende mais rápido.</h2>
-      <p>Numeração, cores e categorias ficam organizadas para o cliente não se perder.</p>
+      <p class="eyebrow">Caminhe melhor</p>
+      <h2>Caminhe com mais conforto e confiança.</h2>
+      <p>Encontre o tênis ideal para sua rotina, com o ajuste certo para cada passo.</p>
     </div>
     <span>02</span>
   </article>
   <article class="banner-slide">
     <div>
-      <p class="eyebrow">WhatsApp pronto</p>
-      <h2>Sacola de interesse com mensagem automática.</h2>
-      <p>O cliente escolhe vários modelos e manda tudo em uma mensagem só.</p>
+      <p class="eyebrow">Escolha com cuidado</p>
+      <h2>Cada passo merece atenção.</h2>
+      <p>Escolha um modelo que una conforto, qualidade e praticidade para acompanhar você todos os dias.</p>
     </div>
     <span>03</span>
   </article>
@@ -50,7 +52,7 @@
 <section class="catalog-intro premium-intro" id="vitrine">
   <div>
     <p class="eyebrow">Vitrine da loja</p>
-    <h2>Modelos disponíveis agora</h2>
+    <h2>Conforto para caminhar melhor todos os dias</h2>
     <p>{{ settings.catalog_intro }}</p>
   </div>
   <div class="quick-filter-tags">
@@ -211,14 +213,14 @@
 <section class="how-to-buy" id="como-comprar">
   <div class="section-head">
     <div>
-      <p class="eyebrow">Venda pelo WhatsApp</p>
-      <h2>Como o cliente compra</h2>
+      <p class="eyebrow">Escolha tranquila</p>
+      <h2>Do primeiro clique ao próximo passo</h2>
     </div>
   </div>
   <div class="steps-grid">
-    <div class="step-card"><span>1</span><strong>Escolhe o modelo</strong><p>O cliente filtra por tamanho, cor ou categoria.</p></div>
-    <div class="step-card"><span>2</span><strong>Monta a lista</strong><p>Ele adiciona um ou vários tênis na sacola de interesse.</p></div>
-    <div class="step-card"><span>3</span><strong>Chama no WhatsApp</strong><p>A mensagem vai pronta para a loja finalizar o atendimento.</p></div>
+    <div class="step-card"><span>1</span><strong>Encontre seu conforto</strong><p>Veja modelos, cores e tamanhos disponíveis.</p></div>
+    <div class="step-card"><span>2</span><strong>Escolha com calma</strong><p>Adicione à lista os modelos que combinaram com sua rotina.</p></div>
+    <div class="step-card"><span>3</span><strong>Confirme com a loja</strong><p>Envie pelo WhatsApp e receba o atendimento para finalizar.</p></div>
   </div>
 </section>
 {% endblock %}

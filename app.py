@@ -118,9 +118,9 @@ def init_db():
         )
         defaults = {
             "store_name": "Ponto REM",
-            "store_subtitle": "Tênis ortopédicos, conforto e bem-estar para seus passos.",
+            "store_subtitle": "Conforto, cuidado e bem-estar para caminhar melhor todos os dias.",
             "whatsapp": "",
-            "catalog_intro": "Veja os modelos disponíveis, escolha sua numeração e fale conosco pelo WhatsApp.",
+            "catalog_intro": "Escolha o modelo ideal para sua rotina com mais conforto, praticidade e confiança.",
             "low_stock_limit": "2",
         }
         for key, value in defaults.items():

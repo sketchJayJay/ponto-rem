@@ -19,14 +19,13 @@
       {% if phone %}
         <a class="btn whatsapp-outline" target="_blank" href="https://wa.me/55{{ phone }}?text={{ ('Olá! Quero atendimento da ' ~ settings.store_name)|urlencode }}">WhatsApp</a>
       {% endif %}
-      <a class="btn ghost" href="{{ url_for('login') }}">Painel</a>
     </div>
   </nav>
   <div class="hero-content ultra-content">
     <div class="hero-copy">
-      <p class="eyebrow">Catálogo premium .REM</p>
-      <h1>Escolha conforto sem ficar perguntando tamanho por tamanho.</h1>
-      <p>{{ settings.store_subtitle }}</p>
+      <p class="eyebrow">Bem-estar em cada passo</p>
+      <h1>Seu conforto começa pelos pés.</h1>
+      <p>Escolha modelos ortopédicos que unem cuidado, leveza e confiança para acompanhar sua rotina.</p>
       <div class="hero-cta-row">
         <a class="btn primary big-btn" href="{{ url_for('catalog') }}#vitrine">Abrir vitrine</a>
         {% if phone %}
@@ -37,20 +36,20 @@
     <div class="hero-showcase">
       <div class="showcase-orbit"></div>
       <div class="showcase-card main">
-        <span>Vitrine atualizada</span>
-        <strong>Modelos, cores e tamanhos no mesmo link</strong>
+        <span>Escolha com carinho</span>
+        <strong>O tênis certo faz diferença no seu dia</strong>
       </div>
       <div class="showcase-card floating one">
-        <b>34 ao 42</b>
-        <small>Filtre por numeração</small>
+        <b>Leveza</b>
+        <small>Para caminhar melhor</small>
       </div>
       <div class="showcase-card floating two">
-        <b>WhatsApp</b>
-        <small>Sacola de interesse</small>
+        <b>Cuidado</b>
+        <small>Em cada detalhe</small>
       </div>
       <div class="showcase-card floating three">
-        <b>Últimas unidades</b>
-        <small>Aviso automático</small>
+        <b>Conforto</b>
+        <small>Para todos os dias</small>
       </div>
     </div>
   </div>
@@ -89,6 +88,6 @@
 <div class="interest-overlay" data-interest-overlay></div>
 <footer class="footer ultra-footer">
   <strong>{{ settings.store_name }}</strong>
-  <span>Catálogo online com estoque por tamanho, cor e atendimento pelo WhatsApp.</span>
+  <span>Conforto, cuidado e bem-estar para caminhar melhor.</span>
 </footer>
 {% endblock %}
