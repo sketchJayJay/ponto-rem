@@ -1,18 +1,78 @@
 {% extends "base.html" %}
 {% block body %}
-<header class="public-hero">
+<header class="public-hero premium-hero">
   <nav class="public-nav">
-    <a href="{{ url_for('catalog') }}"><img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM"></a>
-    <a class="btn ghost" href="{{ url_for('login') }}">Painel</a>
+    <a class="public-logo" href="{{ url_for('catalog') }}">
+      <img src="{{ url_for('static', filename='img/logo-rem.png') }}" alt="Logo REM">
+      <span>
+        <strong>{{ settings.store_name }}</strong>
+        <small>Conforto com estilo</small>
+      </span>
+    </a>
+    <div class="public-nav-actions">
+      {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
+      {% if phone %}
+        <a class="btn whatsapp-outline" target="_blank" href="https://wa.me/55{{ phone }}">WhatsApp</a>
+      {% endif %}
+      <a class="btn ghost" href="{{ url_for('login') }}">Painel</a>
+    </div>
   </nav>
-  <div class="hero-content">
-    <p class="eyebrow">Catálogo online</p>
-    <h1>{{ settings.store_name }}</h1>
-    <p>{{ settings.store_subtitle }}</p>
+  <div class="hero-content premium-content">
+    <div class="hero-copy">
+      <p class="eyebrow">Vitrine online .REM</p>
+      <h1>{{ settings.store_name }}</h1>
+      <p>{{ settings.store_subtitle }}</p>
+      <div class="hero-cta-row">
+        <a class="btn primary" href="{{ url_for('catalog') }}#vitrine">Ver vitrine</a>
+        {% if phone %}
+          <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ ('Olá! Quero atendimento sobre os tênis ortopédicos da ' ~ settings.store_name)|urlencode }}">Atendimento no WhatsApp</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="hero-feature-card">
+      <div class="hero-feature-top">
+        <span class="pill orange">Especialidade</span>
+        <strong>Tênis ortopédicos</strong>
+      </div>
+      <ul class="hero-feature-list">
+        <li>Modelos com foco em conforto e estabilidade</li>
+        <li>Tamanhos e cores atualizados conforme o estoque</li>
+        <li>Escolha os modelos e envie seu interesse por WhatsApp</li>
+      </ul>
+    </div>
   </div>
 </header>
-<main class="public-main">
+<main class="public-main premium-main">
   {% block public_content %}{% endblock %}
 </main>
+<div class="interest-fab" data-interest-open>
+  <span class="interest-fab-count" data-interest-count>0</span>
+  <div>
+    <strong>Lista de interesse</strong>
+    <small>Enviar modelos no WhatsApp</small>
+  </div>
+</div>
+<aside class="interest-drawer" data-interest-drawer>
+  <div class="interest-drawer-head">
+    <div>
+      <p class="eyebrow">WhatsApp inteligente</p>
+      <h3>Sacola de interesse</h3>
+    </div>
+    <button class="icon-btn" type="button" data-interest-close>×</button>
+  </div>
+  <div class="interest-drawer-body" data-interest-items>
+    <div class="empty">Sua lista está vazia. Adicione modelos para enviar no WhatsApp.</div>
+  </div>
+  <div class="interest-drawer-actions">
+    {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
+    <button class="btn ghost" type="button" data-interest-clear>Limpar</button>
+    {% if phone %}
+      <a class="btn whatsapp" href="#" data-interest-whatsapp data-whatsapp="55{{ phone }}">Enviar no WhatsApp</a>
+    {% else %}
+      <button class="btn" type="button" disabled>Cadastre o WhatsApp da loja</button>
+    {% endif %}
+  </div>
+</aside>
+<div class="interest-overlay" data-interest-overlay></div>
 <footer class="footer">{{ settings.store_name }} • conforto em estoque, atendimento pelo WhatsApp.</footer>
 {% endblock %}

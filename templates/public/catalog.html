@@ -1,27 +1,118 @@
 {% extends "public/public_base.html" %}
 {% block public_content %}
-<section class="catalog-intro">
-  <h2>Modelos disponíveis</h2>
-  <p>{{ settings.catalog_intro }}</p>
+<section class="catalog-top-strip">
+  <div class="metric-mini">
+    <strong>{{ stats.total_models }}</strong>
+    <span>modelos disponíveis</span>
+  </div>
+  <div class="metric-mini">
+    <strong>{{ stats.total_stock }}</strong>
+    <span>itens no estoque</span>
+  </div>
+  <div class="metric-mini">
+    <strong>{{ stats.featured_count }}</strong>
+    <span>destaques na vitrine</span>
+  </div>
 </section>
-<form class="catalog-filter" method="get">
-  <input name="q" value="{{ q }}" placeholder="Buscar modelo, marca ou tipo">
-  <select name="tam"><option value="">Todos os tamanhos</option>{% for s in sizes %}<option value="{{ s.size }}" {% if size==s.size %}selected{% endif %}>Tam. {{ s.size }}</option>{% endfor %}</select>
-  <select name="cor"><option value="">Todas as cores</option>{% for c in colors %}<option value="{{ c.color }}" {% if color==c.color %}selected{% endif %}>{{ c.color }}</option>{% endfor %}</select>
-  <button class="btn primary" type="submit">Filtrar</button>
+
+<section class="catalog-intro premium-intro" id="vitrine">
+  <div>
+    <h2>Vitrine online</h2>
+    <p>{{ settings.catalog_intro }}</p>
+  </div>
+  <div class="quick-filter-tags">
+    {% for s in sizes[:6] %}
+      <a class="quick-chip {% if size == s.size %}active{% endif %}" href="{{ url_for('catalog', q=q, tam=s.size, cor=color) }}">Tam. {{ s.size }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<form class="catalog-filter premium-filter" method="get">
+  <div class="search-field">
+    <span>🔎</span>
+    <input name="q" value="{{ q }}" placeholder="Busque por modelo, marca, cor ou tipo de tênis">
+  </div>
+  <select name="tam">
+    <option value="">Todos os tamanhos</option>
+    {% for s in sizes %}
+      <option value="{{ s.size }}" {% if size==s.size %}selected{% endif %}>Tam. {{ s.size }}</option>
+    {% endfor %}
+  </select>
+  <select name="cor">
+    <option value="">Todas as cores</option>
+    {% for c in colors %}
+      <option value="{{ c.color }}" {% if color==c.color %}selected{% endif %}>{{ c.color }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn primary" type="submit">Aplicar</button>
+  <a class="btn" href="{{ url_for('catalog') }}">Limpar</a>
 </form>
+
+{% if highlights %}
+<section class="featured-row">
+  {% for product in highlights %}
+    {% set meta = variant_map.get(product.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
+    <article class="featured-card">
+      <div>
+        <p class="eyebrow">Destaque</p>
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.brand or product.category }}</p>
+        <div class="featured-meta">
+          <span>{{ product.price|money }}</span>
+          <small>{{ meta.stock }} unidades disponíveis</small>
+        </div>
+      </div>
+      <a class="btn primary" href="{{ url_for('product_detail', product_id=product.id) }}">Ver modelo</a>
+    </article>
+  {% endfor %}
+</section>
+{% endif %}
+
 <section class="product-grid public-products">
 {% for product in products %}
-  <article class="product-card public-card">
-    {% if product.highlight %}<span class="badge">Destaque</span>{% endif %}
-    <img src="{{ product_image(product) }}" alt="{{ product.name }}">
+  {% set meta = variant_map.get(product.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
+  <article class="product-card public-card premium-product-card">
+    <div class="card-media">
+      {% if product.highlight %}<span class="badge">Destaque</span>{% endif %}
+      {% if meta.stock <= low_limit %}<span class="stock-badge low">Últimas unidades</span>{% else %}<span class="stock-badge">Disponível</span>{% endif %}
+      <img src="{{ product_image(product) }}" alt="{{ product.name }}">
+    </div>
     <div class="product-info">
-      <span class="pill">{{ product.category }}</span>
-      <h3>{{ product.name }}</h3>
-      <p>{{ product.brand }}</p>
+      <div class="card-headline">
+        <span class="pill">{{ product.category }}</span>
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.brand or 'Conforto ortopédico' }}</p>
+      </div>
       <strong>{{ product.price|money }}</strong>
-      <small>{{ product.total_quantity }} pares disponíveis</small>
-      <a class="btn primary" href="{{ url_for('product_detail', product_id=product.id) }}">Ver tamanhos</a>
+      <div class="variant-summary">
+        <div>
+          <small>Tamanhos</small>
+          <div class="chip-row">
+            {% for item in meta.sizes[:6] %}<span class="size-chip">{{ item }}</span>{% endfor %}
+            {% if meta.sizes|length > 6 %}<span class="size-chip more">+{{ meta.sizes|length - 6 }}</span>{% endif %}
+          </div>
+        </div>
+        <div>
+          <small>Cores</small>
+          <div class="chip-row">
+            {% for item in meta.colors[:3] %}<span class="color-pill">{{ item }}</span>{% endfor %}
+            {% if meta.colors|length > 3 %}<span class="color-pill">+{{ meta.colors|length - 3 }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      <small>{{ meta.stock }} unidades disponíveis</small>
+    </div>
+    <div class="card-actions public-card-actions">
+      <a class="btn primary" href="{{ url_for('product_detail', product_id=product.id) }}">Ver detalhes</a>
+      <button
+        class="btn"
+        type="button"
+        data-interest-add
+        data-product-id="{{ product.id }}"
+        data-product-name="{{ product.name }}"
+        data-product-price="{{ product.price|money }}"
+        data-product-link="{{ url_for('product_detail', product_id=product.id) }}"
+      >Quero esse</button>
     </div>
   </article>
 {% else %}

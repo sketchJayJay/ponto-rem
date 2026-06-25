@@ -1,25 +1,123 @@
 {% extends "public/public_base.html" %}
 {% block public_content %}
-<section class="detail-card">
-  <div class="detail-image"><img src="{{ product_image(product) }}" alt="{{ product.name }}"></div>
-  <div class="detail-info">
+<section class="detail-card premium-detail-card">
+  <div class="detail-image-wrap">
+    <div class="detail-image"><img src="{{ product_image(product) }}" alt="{{ product.name }}"></div>
+    <div class="detail-image-note">
+      {% if total_quantity <= low_limit %}
+        <span class="stock-badge low">Últimas unidades disponíveis</span>
+      {% else %}
+        <span class="stock-badge">Estoque disponível</span>
+      {% endif %}
+      <strong>{{ total_quantity }} unidades em estoque</strong>
+    </div>
+  </div>
+  <div class="detail-info premium-detail-info">
     <span class="pill">{{ product.category }}</span>
     <h2>{{ product.name }}</h2>
-    <p class="muted">{{ product.brand }}</p>
+    <p class="muted detail-brand">{{ product.brand or 'Conforto ortopédico' }}</p>
     <strong class="detail-price">{{ product.price|money }}</strong>
-    <p>{{ product.description }}</p>
-    <h3>Tamanhos disponíveis</h3>
-    <div class="size-cloud">
-      {% for v in variants %}<span>{{ v.color }} • Tam. {{ v.size }} <b>{{ v.quantity }}</b></span>{% endfor %}
+    <p class="detail-description">{{ product.description or 'Modelo ortopédico pensado para oferecer conforto, melhor ajuste e bem-estar no dia a dia.' }}</p>
+
+    <div class="detail-benefits">
+      <div class="benefit-box"><strong>Conforto</strong><span>Mais estabilidade para o dia a dia</span></div>
+      <div class="benefit-box"><strong>Disponível</strong><span>Escolha pelo tamanho e cor</span></div>
+      <div class="benefit-box"><strong>Atendimento</strong><span>Solicite pelo WhatsApp</span></div>
     </div>
+
+    <div class="selection-card">
+      <h3>Escolha o que te interessa</h3>
+      <p>Selecione cor e tamanho para mandar uma mensagem mais completa.</p>
+      <div class="selection-grid">
+        <label>
+          Cor
+          <select data-detail-color>
+            <option value="">Selecionar cor</option>
+            {% for color in colors %}
+              <option value="{{ color }}">{{ color }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          Tamanho
+          <select data-detail-size>
+            <option value="">Selecionar tamanho</option>
+            {% for size in sizes %}
+              <option value="{{ size }}">{{ size }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <button
+        class="btn primary"
+        type="button"
+        data-interest-add
+        data-product-id="{{ product.id }}"
+        data-product-name="{{ product.name }}"
+        data-product-price="{{ product.price|money }}"
+        data-product-link="{{ url_for('product_detail', product_id=product.id) }}"
+        data-detail-product
+      >Adicionar à sacola de interesse</button>
+    </div>
+
+    <div class="variant-display">
+      <h3>Tamanhos e cores disponíveis</h3>
+      <div class="variant-groups">
+        {% for color, items in grouped_variants.items() %}
+          <div class="variant-group">
+            <strong>{{ color }}</strong>
+            <div class="chip-row wrap">
+              {% for item in items %}
+                <span class="size-chip detailed">Tam. {{ item.size }} <b>{{ item.quantity }}</b></span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
     {% set phone = settings.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') %}
-    {% set msg = 'Olá, tenho interesse no ' ~ product.name ~ '. Vi no catálogo da Ponto REM. Está disponível?' %}
-    {% if phone %}
-      <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ msg|urlencode }}">Chamar no WhatsApp</a>
-    {% else %}
-      <p class="empty">Cadastre o WhatsApp da loja nas configurações para ativar o botão.</p>
-    {% endif %}
-    <a class="btn" href="{{ url_for('catalog') }}">Voltar ao catálogo</a>
+    {% set msg = 'Olá, tenho interesse no ' ~ product.name ~ '. Vi no catálogo da ' ~ settings.store_name ~ '. Está disponível?' %}
+    <div class="detail-actions-row">
+      {% if phone %}
+        <a class="btn whatsapp" target="_blank" href="https://wa.me/55{{ phone }}?text={{ msg|urlencode }}">Chamar no WhatsApp</a>
+      {% endif %}
+      <a class="btn" href="{{ url_for('catalog') }}">Voltar à vitrine</a>
+    </div>
   </div>
 </section>
+
+{% if related %}
+<section class="related-section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Você também pode gostar</p>
+      <h2>Outros modelos disponíveis</h2>
+    </div>
+  </div>
+  <section class="product-grid public-products">
+    {% for item in related %}
+      {% set meta = related_map.get(item.id, {'sizes': [], 'colors': [], 'stock': 0}) %}
+      <article class="product-card public-card premium-product-card compact-card">
+        <div class="card-media">
+          {% if item.highlight %}<span class="badge">Destaque</span>{% endif %}
+          <img src="{{ product_image(item) }}" alt="{{ item.name }}">
+        </div>
+        <div class="product-info">
+          <span class="pill">{{ item.category }}</span>
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.brand or 'Conforto ortopédico' }}</p>
+          <strong>{{ item.price|money }}</strong>
+          <div class="chip-row">
+            {% for s in meta.sizes[:5] %}<span class="size-chip">{{ s }}</span>{% endfor %}
+          </div>
+        </div>
+        <div class="card-actions public-card-actions">
+          <a class="btn primary" href="{{ url_for('product_detail', product_id=item.id) }}">Ver modelo</a>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+</section>
+{% endif %}
 {% endblock %}

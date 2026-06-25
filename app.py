@@ -654,9 +654,48 @@ def catalog():
         """,
         tuple(params),
     )
+    product_ids = [row["id"] for row in products]
+    variant_map = {}
+    if product_ids:
+        placeholders = ",".join("?" for _ in product_ids)
+        variants = query_all(
+            f"""
+            SELECT product_id, color, size, quantity
+            FROM variants
+            WHERE quantity > 0 AND product_id IN ({placeholders})
+            ORDER BY color, CAST(size AS INTEGER), size
+            """,
+            tuple(product_ids),
+        )
+        for row in variants:
+            entry = variant_map.setdefault(row["product_id"], {"sizes": [], "colors": [], "stock": 0})
+            if row["size"] not in entry["sizes"]:
+                entry["sizes"].append(row["size"])
+            if row["color"] not in entry["colors"]:
+                entry["colors"].append(row["color"])
+            entry["stock"] += row["quantity"]
     sizes = query_all("SELECT DISTINCT size FROM variants WHERE quantity > 0 ORDER BY CAST(size AS INTEGER), size")
     colors = query_all("SELECT DISTINCT color FROM variants WHERE quantity > 0 ORDER BY color")
-    return render_template("public/catalog.html", products=products, sizes=sizes, colors=colors, q=search, size=size, color=color)
+    highlights = [row for row in products if row["highlight"]][:4]
+    stats = {
+        "total_models": len(products),
+        "total_stock": sum(item["stock"] for item in variant_map.values()) if variant_map else 0,
+        "featured_count": len(highlights),
+    }
+    low_limit = int(settings_dict().get("low_stock_limit", "2") or 2)
+    return render_template(
+        "public/catalog.html",
+        products=products,
+        sizes=sizes,
+        colors=colors,
+        q=search,
+        size=size,
+        color=color,
+        variant_map=variant_map,
+        highlights=highlights,
+        stats=stats,
+        low_limit=low_limit,
+    )
 
 
 @app.route("/produto/<int:product_id>")
@@ -664,8 +703,62 @@ def product_detail(product_id):
     product = query_one("SELECT * FROM products WHERE id=? AND show_public=1", (product_id,))
     if not product:
         abort(404)
-    variants = query_all("SELECT * FROM variants WHERE product_id=? AND quantity > 0 ORDER BY color, CAST(size AS INTEGER), size", (product_id,))
-    return render_template("public/product_detail.html", product=product, variants=variants)
+    variants = query_all(
+        "SELECT * FROM variants WHERE product_id=? AND quantity > 0 ORDER BY color, CAST(size AS INTEGER), size",
+        (product_id,),
+    )
+    related = query_all(
+        """
+        SELECT p.*, COALESCE(SUM(v.quantity),0) total_quantity
+        FROM products p
+        LEFT JOIN variants v ON v.product_id = p.id
+        WHERE p.show_public=1 AND p.id != ?
+        GROUP BY p.id
+        HAVING total_quantity > 0
+        ORDER BY p.highlight DESC, p.updated_at DESC
+        LIMIT 4
+        """,
+        (product_id,),
+    )
+    grouped = {}
+    colors = []
+    sizes = []
+    total_quantity = 0
+    for row in variants:
+        total_quantity += row["quantity"]
+        grouped.setdefault(row["color"], []).append(row)
+        if row["color"] not in colors:
+            colors.append(row["color"])
+        if row["size"] not in sizes:
+            sizes.append(row["size"])
+    related_map = {}
+    related_ids = [row["id"] for row in related]
+    if related_ids:
+        placeholders = ",".join("?" for _ in related_ids)
+        related_variants = query_all(
+            f"SELECT product_id, color, size, quantity FROM variants WHERE quantity > 0 AND product_id IN ({placeholders}) ORDER BY color, CAST(size AS INTEGER), size",
+            tuple(related_ids),
+        )
+        for row in related_variants:
+            entry = related_map.setdefault(row["product_id"], {"sizes": [], "colors": [], "stock": 0})
+            if row["size"] not in entry["sizes"]:
+                entry["sizes"].append(row["size"])
+            if row["color"] not in entry["colors"]:
+                entry["colors"].append(row["color"])
+            entry["stock"] += row["quantity"]
+    low_limit = int(settings_dict().get("low_stock_limit", "2") or 2)
+    return render_template(
+        "public/product_detail.html",
+        product=product,
+        variants=variants,
+        grouped_variants=grouped,
+        colors=colors,
+        sizes=sizes,
+        total_quantity=total_quantity,
+        related=related,
+        related_map=related_map,
+        low_limit=low_limit,
+    )
 
 
 if __name__ == "__main__":
